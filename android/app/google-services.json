@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "56813302812",
+    "project_id": "bamtol-market-son",
+    "storage_bucket": "bamtol-market-son.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:56813302812:android:52fd987127ead56ec91bd9",
+        "android_client_info": {
+          "package_name": "com.devman.cloneapp.bamtol_market_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCcecK8BZU9iGtJ2N3hioRzHvwJAjxciFU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
