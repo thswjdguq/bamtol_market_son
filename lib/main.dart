@@ -5,6 +5,8 @@ import 'package:bamtol_market_app/src/common/controller/data_load_controller.dar
 import 'package:bamtol_market_app/src/home/page/home_page.dart';
 import 'package:bamtol_market_app/src/splash/controller/splash_controller.dart';
 import 'package:bamtol_market_app/src/user/login/page/login_page.dart';
+import 'package:bamtol_market_app/src/user/login/controller/login_controller.dart';
+import 'package:bamtol_market_app/src/user/signup/controller/signup_controller.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -38,8 +40,11 @@ class MyApp extends StatelessWidget {
       initialBinding: BindingsBuilder(() {
         Get.put(SplashController());
         Get.put(DataLoadController());
-        Get.put(AuthenticationController()); //------1
+        Get.put(AuthenticationController());
+        Get.put(LoginController());
+        Get.put(SignupController());
       }),
+
       getPages: [
         GetPage(name: '/', page: () => const App()),
         GetPage(name: '/home', page: () => const HomePage()),
