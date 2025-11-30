@@ -14,6 +14,7 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'src/common/controller/bottom_nav_controller.dart';
 import 'package:bamtol_market_app/src/root.dart';
+import 'package:bamtol_market_app/src/product/write/page/product_write_page.dart';
 
 late SharedPreferences prefs;
 
@@ -58,6 +59,7 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/only-home', page: () => const HomePage()),
         GetPage(name: '/login', page: () => const LoginPage()),
         GetPage(name: '/signup', page: () => const SignupPage()),
+        GetPage(name: '/product/write', page: () => ProductWritePage()),
       ],
     );
   }
