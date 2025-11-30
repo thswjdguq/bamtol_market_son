@@ -12,6 +12,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'src/common/controller/bottom_nav_controller.dart';
+import 'package:bamtol_market_app/src/root.dart';
 
 late SharedPreferences prefs;
 
@@ -47,11 +49,13 @@ class MyApp extends StatelessWidget {
         Get.put(AuthenticationController());
         Get.put(LoginController());
         Get.put(SignupController());
+        Get.put(BottomNavController());
       }),
 
       getPages: [
         GetPage(name: '/', page: () => const App()),
-        GetPage(name: '/home', page: () => const HomePage()),
+        GetPage(name: '/home', page: () => const Root()),
+        GetPage(name: '/only-home', page: () => const HomePage()),
         GetPage(name: '/login', page: () => const LoginPage()),
         GetPage(name: '/signup', page: () => const SignupPage()),
       ],
