@@ -5,7 +5,7 @@ class AuthenticationController extends GetxController {
 
   void authCheck() async {
     await Future.delayed(const Duration(milliseconds: 1000));
-    isLogined(true);
+    isLogined(false);
   }
 
   void logout() {
