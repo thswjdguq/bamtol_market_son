@@ -45,5 +45,10 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<!-- Location permissions for flutter_map -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>이 앱은 거래 위치 선택을 위해 당신의 위치를 사용합니다.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>이 앱은 거래 위치 선택을 위해 당신의 위치를 사용합니다.</string>
 </dict>
 </plist>

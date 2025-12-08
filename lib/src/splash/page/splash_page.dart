@@ -57,7 +57,7 @@ class SplashPage extends GetView<SplashController> {
 }
 
 class _SplashView extends GetView<SplashController> {
-  const _SplashView({super.key});
+  const _SplashView();
 
   @override
   Widget build(BuildContext context) {

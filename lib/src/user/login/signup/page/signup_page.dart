@@ -60,10 +60,7 @@ class SignupPage extends GetWidget<SignupController> {
           return Btn(
             onTap: () async {
               if (!isActive) return;
-              final result = await controller.signup();
-              if (result != null) {
-                Get.offNamed('/');
-              }
+              Get.toNamed('/region-select');
             },
             padding: const EdgeInsets.symmetric(vertical: 17),
             color: isActive

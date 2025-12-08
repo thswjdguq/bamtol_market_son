@@ -7,6 +7,9 @@ class SignupController extends GetxController {
   // 닉네임 사용 가능 여부 (목업용)
   RxBool isPossibleUseNickName = false.obs;
 
+  // 지역 상태
+  RxString region = ''.obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -21,6 +24,11 @@ class SignupController extends GetxController {
   // 닉네임 변경
   void changeNickName(String nickName) {
     userNickName(nickName);
+  }
+
+  // 지역 설정
+  void setRegion(String value) {
+    region(value);
   }
 
   //  목업용 닉네임 검사 (DB 안 쓰고 규칙만 간단히 적용)
@@ -46,6 +54,9 @@ class SignupController extends GetxController {
   //  목업용 회원가입
   Future<String?> signup() async {
     if (!isPossibleUseNickName.value) {
+      return null;
+    }
+    if (region.value.isEmpty) {
       return null;
     }
 

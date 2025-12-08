@@ -51,7 +51,9 @@ class LoginPage extends GetView<LoginController> {
         children: [
           Btn(
             color: Colors.white,
-            onTap: controller.googleLogin,
+            onTap: () {
+              Get.toNamed('/signup');
+            },
             child: Row(
               children: [
                 Image.asset('assets/images/google.png'),
@@ -64,7 +66,9 @@ class LoginPage extends GetView<LoginController> {
           Btn(
             color: Colors.black,
             padding: const EdgeInsets.symmetric(horizontal: 10),
-            onTap: controller.appleLogin,
+            onTap: () {
+              Get.toNamed('/signup');
+            },
             child: Row(
               children: [
                 Image.asset('assets/images/apple.png'),
