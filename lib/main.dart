@@ -20,6 +20,10 @@ import 'package:bamtol_market_app/src/product/write/page/product_write_page.dart
 import 'package:bamtol_market_app/src/product/write/controller/product_write_controller.dart';
 import 'package:bamtol_market_app/src/product/detail/page/product_detail_page.dart';
 import 'package:bamtol_market_app/src/product/detail/controller/product_detail_controller.dart';
+import 'package:bamtol_market_app/src/community/controller/community_controller.dart';
+import 'package:bamtol_market_app/src/nearme/controller/nearme_controller.dart';
+import 'package:bamtol_market_app/src/chat/controller/chat_controller.dart';
+import 'package:bamtol_market_app/src/mypage/controller/mypage_controller.dart';
 
 late SharedPreferences prefs;
 
@@ -58,8 +62,11 @@ class MyApp extends StatelessWidget {
         Get.put(BottomNavController());
         Get.put(ProductWriteController());
         Get.put(HomeController());
-        // Chapter 20: 상품 상세 페이지 컨트롤러
         Get.put(ProductDetailController());
+        Get.put(CommunityController());
+        Get.put(NearMeController());
+        Get.put(ChatController());
+        Get.put(MyPageController());
       }),
 
       getPages: [
