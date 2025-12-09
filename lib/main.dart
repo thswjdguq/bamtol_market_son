@@ -62,7 +62,7 @@ class MyApp extends StatelessWidget {
         Get.put(BottomNavController());
         Get.put(ProductWriteController());
         Get.put(HomeController());
-        Get.put(ProductDetailController());
+        // ProductDetailController는 페이지별 바인딩으로 이동
         Get.put(CommunityController());
         Get.put(NearMeController());
         Get.put(ChatController());
@@ -77,10 +77,13 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/signup', page: () => const SignupPage()),
         GetPage(name: '/region-select', page: () => const RegionSelectPage()),
         GetPage(name: '/product/write', page: () => ProductWritePage()),
-        // Chapter 20: 상품 상세 페이지
+        // Chapter 20: 상품 상세 페이지 - 페이지별 바인딩 추가
         GetPage(
           name: '/product/detail/:id',
           page: () => const ProductDetailPage(),
+          binding: BindingsBuilder(() {
+            Get.lazyPut(() => ProductDetailController());
+          }),
         ),
       ],
     );

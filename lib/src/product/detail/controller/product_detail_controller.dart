@@ -20,26 +20,46 @@ class ProductDetailController extends GetxController {
     super.onInit();
     // 라우트에서 전달받은 상품 ID로 상품 정보 로드
     final String? productId = Get.parameters['id'];
+    print('ProductDetailController onInit - productId: $productId');
     if (productId != null) {
       loadProduct(productId);
+    } else {
+      print('ProductDetailController onInit - productId is null!');
+      Get.snackbar('오류', '상품 ID가 전달되지 않았습니다.');
     }
   }
 
   /// 상품 정보 로드
   Future<void> loadProduct(String productId) async {
     try {
-      // 조회수 증가
-      await _repository.incrementViewCount(productId);
+      print('ProductDetailController loadProduct - productId: $productId');
 
+      // 먼저 상품이 존재하는지 확인
       final loadedProduct = _repository.getProductById(productId);
       if (loadedProduct != null) {
+        print(
+          'ProductDetailController loadProduct - product found: ${loadedProduct.title}',
+        );
         product(loadedProduct);
         likeCount(loadedProduct.likers.length);
         // 현재 사용자가 찜했는지 확인 (목업: current_user_123)
         isLiked(loadedProduct.likers.contains('current_user_123'));
+
+        // 조회수 증가
+        await _repository.incrementViewCount(productId);
+
+        // 조회수가 증가된 상품 다시 로드
+        final updatedProduct = _repository.getProductById(productId);
+        if (updatedProduct != null) {
+          product(updatedProduct);
+        }
+      } else {
+        print('ProductDetailController loadProduct - product not found!');
+        Get.snackbar('오류', '상품을 찾을 수 없습니다.');
       }
     } catch (e) {
-      Get.snackbar('오류', '상품 정보를 불러올 수 없습니다.');
+      print('ProductDetailController loadProduct - error: $e');
+      Get.snackbar('오류', '상품 정보를 불러올 수 없습니다: $e');
     }
   }
 
