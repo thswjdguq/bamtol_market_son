@@ -161,11 +161,77 @@ class LocalMockProductRepository {
         locationLabel: '삼도동',
         thumbnailUrl:
             'https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?w=500&auto=format&fit=crop',
-        category: '기타',
+        category: '스포츠/레저',
         condition: '사용감 있음',
         sellerName: '캠핑매니아',
         sellerId: 'seller_10',
         viewCount: 198,
+      ),
+      ProductModel(
+        title: '유모차',
+        description: '제조사 콤비 유모차입니다. 거의 세 상품과 같아요.',
+        price: 150000,
+        locationLabel: '연동',
+        thumbnailUrl:
+            'https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?w=500&auto=format&fit=crop',
+        category: '유아용품',
+        condition: '거의 세 상품',
+        sellerName: '아기엄마',
+        sellerId: 'seller_11',
+        viewCount: 234,
+      ),
+      ProductModel(
+        title: '강아지 사료 10kg',
+        description: '미개봉 강아지 사료입니다. 유통기한 지나서 저렴하게 드려요.',
+        price: 15000,
+        locationLabel: '노형동',
+        thumbnailUrl:
+            'https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=500&auto=format&fit=crop',
+        category: '반려동물',
+        condition: '새 상품',
+        sellerName: '반려동물애호가',
+        sellerId: 'seller_12',
+        viewCount: 98,
+      ),
+      ProductModel(
+        title: '전기포트',
+        description: '조리용 다기능 전기포트. 거의 사용하지 않았습니다.',
+        price: 25000,
+        locationLabel: '아라동',
+        thumbnailUrl:
+            'https://images.unsplash.com/photo-1585515320310-259814833e62?w=500&auto=format&fit=crop',
+        category: '생활용품',
+        condition: '거의 세 상품',
+        sellerName: '생활용품판매',
+        sellerId: 'seller_13',
+        viewCount: 156,
+      ),
+      ProductModel(
+        title: '요가매트',
+        description: '두께 10mm 요가매트입니다. 홍송색이고 가방 포함이에요.',
+        price: 35000,
+        locationLabel: '삼도동',
+        thumbnailUrl:
+            'https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?w=500&auto=format&fit=crop',
+        category: '스포츠/레저',
+        condition: '사용감 있음',
+        sellerName: '헬스요가',
+        sellerId: 'seller_14',
+        viewCount: 211,
+      ),
+      ProductModel(
+        title: '아기 장난감 세트',
+        description: '나눔입니다. 온가족이 가지고 높은 장난감들이에요.',
+        price: 0,
+        isFree: true,
+        locationLabel: '연동',
+        thumbnailUrl:
+            'https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=500&auto=format&fit=crop',
+        category: '유아용품',
+        condition: '사용감 있음',
+        sellerName: '마음씨좋은분',
+        sellerId: 'seller_15',
+        viewCount: 334,
       ),
     ];
 
@@ -178,23 +244,47 @@ class LocalMockProductRepository {
     _products.insert(0, product);
   }
 
-  /// 상품 목록 조회 (페이지네이션)
+  /// 상품 목록 조회 (페이지네이션 + 필터링)
   Future<List<ProductModel>> getProducts({
     int offset = 0,
     int limit = 10,
+    String? category,
+    String? searchQuery,
   }) async {
     await Future.delayed(const Duration(milliseconds: 300));
 
+    // 필터링: 카테고리와 검색어 적용
+    List<ProductModel> filteredProducts = _products;
+
+    // 카테고리 필터
+    if (category != null && category.isNotEmpty) {
+      filteredProducts = filteredProducts
+          .where((product) => product.category == category)
+          .toList();
+    }
+
+    // 검색어 필터 (제목 또는 설명에 포함)
+    if (searchQuery != null && searchQuery.isNotEmpty) {
+      final lowerQuery = searchQuery.toLowerCase();
+      filteredProducts = filteredProducts.where((product) {
+        final titleMatch = product.title.toLowerCase().contains(lowerQuery);
+        final descMatch = (product.description ?? '').toLowerCase().contains(
+          lowerQuery,
+        );
+        return titleMatch || descMatch;
+      }).toList();
+    }
+
     final int endIndex = offset + limit;
-    if (offset >= _products.length) {
+    if (offset >= filteredProducts.length) {
       return [];
     }
 
-    final int actualEndIndex = endIndex > _products.length
-        ? _products.length
+    final int actualEndIndex = endIndex > filteredProducts.length
+        ? filteredProducts.length
         : endIndex;
 
-    return _products.sublist(offset, actualEndIndex);
+    return filteredProducts.sublist(offset, actualEndIndex);
   }
 
   /// 전체 상품 개수

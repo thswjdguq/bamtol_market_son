@@ -1,5 +1,6 @@
 import 'package:bamtol_market_app/src/product/model/product_model.dart';
 import 'package:bamtol_market_app/src/product/repository/product_repository.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 /// HomeController
@@ -11,6 +12,52 @@ class HomeController extends GetxController {
   // ===== 상태 변수 =====
   RxList<ProductModel> products = RxList<ProductModel>();
   RxBool isLoading = RxBool(false);
+
+  // 카테고리 관련
+  final List<String> categories = [
+    '전체',
+    '전자기기',
+    '의류',
+    '가구',
+    '도서',
+    '스포츠/레저',
+    '생활용품',
+    '유아용품',
+    '반려동물',
+    '기타',
+  ];
+  RxString selectedCategory = RxString('전체');
+
+  // 카테고리 아이콘 매핑
+  IconData getCategoryIcon(String category) {
+    switch (category) {
+      case '전체':
+        return Icons.apps;
+      case '전자기기':
+        return Icons.devices;
+      case '의류':
+        return Icons.checkroom;
+      case '가구':
+        return Icons.chair;
+      case '도서':
+        return Icons.menu_book;
+      case '스포츠/레저':
+        return Icons.sports_basketball;
+      case '생활용품':
+        return Icons.shopping_basket;
+      case '유아용품':
+        return Icons.child_care;
+      case '반려동물':
+        return Icons.pets;
+      case '기타':
+        return Icons.more_horiz;
+      default:
+        return Icons.category;
+    }
+  }
+
+  // 검색 관련
+  RxString searchQuery = RxString('');
 
   // 페이지네이션 관련
   late int offset = 0;
@@ -26,6 +73,24 @@ class HomeController extends GetxController {
     loadInitial();
   }
 
+  /// 카테고리 변경
+  void changeCategory(String category) {
+    selectedCategory.value = category;
+    loadInitial();
+  }
+
+  /// 검색어 변경
+  void searchProducts(String query) {
+    searchQuery.value = query;
+    loadInitial();
+  }
+
+  /// 검색어 초기화
+  void clearSearch() {
+    searchQuery.value = '';
+    loadInitial();
+  }
+
   /// 초기 로드
   /// offset을 0으로 초기화하고 첫 페이지 데이터 로드
   Future<void> loadInitial() async {
@@ -37,6 +102,10 @@ class HomeController extends GetxController {
       final loadedProducts = await _repository.getProducts(
         offset: offset,
         limit: limit,
+        category: selectedCategory.value == '전체'
+            ? null
+            : selectedCategory.value,
+        searchQuery: searchQuery.value.isEmpty ? null : searchQuery.value,
       );
       products.assignAll(loadedProducts);
 
@@ -69,6 +138,10 @@ class HomeController extends GetxController {
       final loadedProducts = await _repository.getProducts(
         offset: offset,
         limit: limit,
+        category: selectedCategory.value == '전체'
+            ? null
+            : selectedCategory.value,
+        searchQuery: searchQuery.value.isEmpty ? null : searchQuery.value,
       );
 
       if (loadedProducts.isEmpty) {

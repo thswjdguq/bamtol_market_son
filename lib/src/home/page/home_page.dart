@@ -39,9 +39,17 @@ class HomePage extends GetView<HomeController> {
         ),
         // 오른쪽 액션 아이콘들
         actions: [
-          SvgPicture.asset(
-            'assets/svg/icons/search.svg',
-            colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+          GestureDetector(
+            onTap: () {
+              _showSearchDialog(context);
+            },
+            child: SvgPicture.asset(
+              'assets/svg/icons/search.svg',
+              colorFilter: const ColorFilter.mode(
+                Colors.white,
+                BlendMode.srcIn,
+              ),
+            ),
           ),
           const SizedBox(width: 16),
           SvgPicture.asset(
@@ -57,8 +65,15 @@ class HomePage extends GetView<HomeController> {
         ],
       ),
 
-      // Body 섹션 - 상품 리스트 (Chapter 17)
-      body: const _ProductList(),
+      // Body 섹션 - 카테고리 필터 + 상품 리스트
+      body: Column(
+        children: [
+          // 카테고리 필터
+          const _CategoryFilter(),
+          // 상품 리스트
+          const Expanded(child: _ProductList()),
+        ],
+      ),
 
       // FloatingActionButton 섹션 - 커스텀 글쓰기 버튼
       floatingActionButton: Padding(
@@ -97,6 +112,221 @@ class HomePage extends GetView<HomeController> {
       ),
 
       backgroundColor: const Color(0xff212123),
+    );
+  }
+
+  // 검색 다이얼로그 표시
+  static void _showSearchDialog(BuildContext context) {
+    final controller = Get.find<HomeController>();
+    final searchController = TextEditingController(
+      text: controller.searchQuery.value,
+    );
+
+    Get.dialog(
+      Dialog(
+        backgroundColor: const Color(0xff2C2C2E),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // 제목
+              const AppFont(
+                '상품 검색',
+                color: Colors.white,
+                size: 18,
+                fontWeight: FontWeight.bold,
+              ),
+              const SizedBox(height: 20),
+              // 카테고리 선택 그리드
+              Container(
+                constraints: const BoxConstraints(maxHeight: 200),
+                child: GridView.builder(
+                  shrinkWrap: true,
+                  physics: const BouncingScrollPhysics(),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 4,
+                    childAspectRatio: 0.85,
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 12,
+                  ),
+                  itemCount: controller.categories.length,
+                  itemBuilder: (context, index) {
+                    final category = controller.categories[index];
+                    final icon = controller.getCategoryIcon(category);
+
+                    return Obx(() {
+                      final isSelected =
+                          controller.selectedCategory.value == category;
+
+                      return GestureDetector(
+                        onTap: () {
+                          controller.changeCategory(category);
+                        },
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              width: 56,
+                              height: 56,
+                              decoration: BoxDecoration(
+                                color: isSelected
+                                    ? const Color(0xffED7738)
+                                    : const Color(0xff3C3C3E),
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: Icon(
+                                icon,
+                                color: isSelected
+                                    ? Colors.white
+                                    : const Color(0xff878B93),
+                                size: 28,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            AppFont(
+                              category,
+                              color: isSelected
+                                  ? const Color(0xffED7738)
+                                  : const Color(0xff878B93),
+                              size: 12,
+                              fontWeight: isSelected
+                                  ? FontWeight.w600
+                                  : FontWeight.w400,
+                            ),
+                          ],
+                        ),
+                      );
+                    });
+                  },
+                ),
+              ),
+              const SizedBox(height: 16),
+              // 검색 입력창
+              TextField(
+                controller: searchController,
+                autofocus: true,
+                style: const TextStyle(color: Colors.white),
+                decoration: InputDecoration(
+                  hintText: '검색어를 입력하세요',
+                  hintStyle: const TextStyle(color: Color(0xff878B93)),
+                  filled: true,
+                  fillColor: const Color(0xff3C3C3E),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  prefixIcon: const Icon(
+                    Icons.search,
+                    color: Color(0xff878B93),
+                  ),
+                  suffixIcon: searchController.text.isNotEmpty
+                      ? IconButton(
+                          icon: const Icon(
+                            Icons.clear,
+                            color: Color(0xff878B93),
+                          ),
+                          onPressed: () {
+                            searchController.clear();
+                          },
+                        )
+                      : null,
+                ),
+                onSubmitted: (value) {
+                  if (value.trim().isNotEmpty) {
+                    controller.searchProducts(value.trim());
+                    Get.back();
+                  }
+                },
+              ),
+              const SizedBox(height: 20),
+              // 버튼
+              Row(
+                children: [
+                  // 취소 버튼
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        Get.back();
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        decoration: BoxDecoration(
+                          color: const Color(0xff3C3C3E),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Center(
+                          child: AppFont(
+                            '취소',
+                            color: Color(0xff878B93),
+                            size: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  // 검색 버튼
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        final query = searchController.text.trim();
+                        if (query.isNotEmpty) {
+                          controller.searchProducts(query);
+                          Get.back();
+                        }
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        decoration: BoxDecoration(
+                          color: const Color(0xffED7738),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Center(
+                          child: AppFont(
+                            '검색',
+                            color: Colors.white,
+                            size: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              // 검색 초기화 버튼 (검색어가 있을 때만 표시)
+              if (controller.searchQuery.value.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(top: 12),
+                  child: GestureDetector(
+                    onTap: () {
+                      controller.clearSearch();
+                      Get.back();
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: const Color(0xff878B93)),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Center(
+                        child: AppFont(
+                          '검색 초기화',
+                          color: Color(0xff878B93),
+                          size: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
@@ -321,5 +551,61 @@ class _ProductList extends GetView<HomeController> {
       return '나눔';
     }
     return '₩${NumberFormat('#,###').format(price)}';
+  }
+}
+
+// 카테고리 필터 위젯
+class _CategoryFilter extends GetView<HomeController> {
+  const _CategoryFilter();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 50,
+      color: const Color(0xff212123),
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        itemCount: controller.categories.length,
+        itemBuilder: (context, index) {
+          final category = controller.categories[index];
+
+          return Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: Obx(() {
+              final isSelected = controller.selectedCategory.value == category;
+
+              return GestureDetector(
+                onTap: () {
+                  controller.changeCategory(category);
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: isSelected ? Colors.white : const Color(0xff3C3C3E),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Center(
+                    child: AppFont(
+                      category,
+                      color: isSelected
+                          ? const Color(0xff212123)
+                          : const Color(0xff878B93),
+                      size: 14,
+                      fontWeight: isSelected
+                          ? FontWeight.w600
+                          : FontWeight.w400,
+                    ),
+                  ),
+                ),
+              );
+            }),
+          );
+        },
+      ),
+    );
   }
 }
