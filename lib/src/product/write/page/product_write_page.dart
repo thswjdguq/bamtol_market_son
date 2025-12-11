@@ -511,115 +511,90 @@ class ProductWritePage extends GetView<ProductWriteController> {
           const AppFont('거래 희망 장소', fontWeight: FontWeight.bold, size: 16),
           const SizedBox(height: 12),
 
-          // 위치 드롭다운
+          // 선택된 위치 표시
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey[700]!),
               borderRadius: BorderRadius.circular(8),
               color: Colors.grey[900],
             ),
-            child: DropdownButton<String>(
-              value: controller.locationLabel.value,
-              dropdownColor: Colors.grey[900],
-              underline: const SizedBox(),
-              isExpanded: true,
-              items: ['아라동', '연동', '노형동', '삼도동'].map((location) {
-                return DropdownMenuItem(
-                  value: location,
-                  child: AppFont(location, color: Colors.white),
-                );
-              }).toList(),
-              onChanged: (value) {
-                if (value != null) {
-                  controller.changeLocation(value);
-                }
-              },
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.location_on,
+                  color: Color(0xffED7738),
+                  size: 20,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: AppFont(
+                    '지도에서 선택한 위치 (위도: ${controller.selectedLocation.value.latitude.toStringAsFixed(4)}, 경도: ${controller.selectedLocation.value.longitude.toStringAsFixed(4)})',
+                    color: Colors.white,
+                    size: 13,
+                  ),
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 8),
+          const AppFont(
+            '지도를 클릭하여 원하는 거래 위치를 선택해주세요',
+            color: Color(0xff878B93),
+            size: 12,
+          ),
+          const SizedBox(height: 12),
 
-          // 지도 표시/숨기기 버튼
-          GestureDetector(
-            onTap: () => controller.toggleMapVisibility(),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              decoration: BoxDecoration(
-                border: Border.all(color: const Color(0xffED7738)),
-                borderRadius: BorderRadius.circular(8),
-                color: Colors.grey[900],
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          // flutter_map 지도 위젯 (Chapter 15) - 항상 표시
+          Container(
+            height: 300,
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey[700]!),
+              borderRadius: BorderRadius.circular(8),
+              color: Colors.grey[900],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: FlutterMap(
+                options: MapOptions(
+                  initialCenter: controller.selectedLocation.value,
+                  initialZoom: 15,
+                  onTap: (tapPosition, latLng) {
+                    controller.updateMapLocation(latLng);
+                  },
+                ),
                 children: [
-                  AppFont(
-                    controller.isMapVisible.value ? '지도 숨기기' : '지도 표시하기',
-                    color: const Color(0xffED7738),
-                    fontWeight: FontWeight.bold,
+                  TileLayer(
+                    urlTemplate:
+                        'https://{s}.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png',
+                    subdomains: const ['a', 'b', 'c'],
+                    userAgentPackageName: 'com.example.app',
                   ),
-                  Icon(
-                    controller.isMapVisible.value
-                        ? Icons.expand_less
-                        : Icons.expand_more,
-                    color: const Color(0xffED7738),
+                  MarkerLayer(
+                    markers: [
+                      Marker(
+                        point: controller.selectedLocation.value,
+                        width: 40,
+                        height: 40,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: const Color(0xffED7738),
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(color: Colors.white, width: 2),
+                          ),
+                          child: const Icon(
+                            Icons.location_on,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
             ),
           ),
-          const SizedBox(height: 12),
-
-          // flutter_map 지도 위젯 (Chapter 15)
-          if (controller.isMapVisible.value)
-            Container(
-              height: 300,
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey[700]!),
-                borderRadius: BorderRadius.circular(8),
-                color: Colors.grey[900],
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: FlutterMap(
-                  options: MapOptions(
-                    initialCenter: controller.selectedLocation.value,
-                    initialZoom: 15,
-                    onTap: (tapPosition, latLng) {
-                      controller.updateMapLocation(latLng);
-                    },
-                  ),
-                  children: [
-                    TileLayer(
-                      urlTemplate:
-                          'https://{s}.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png',
-                      subdomains: const ['a', 'b', 'c'],
-                      userAgentPackageName: 'com.example.app',
-                    ),
-                    MarkerLayer(
-                      markers: [
-                        Marker(
-                          point: controller.selectedLocation.value,
-                          width: 40,
-                          height: 40,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: const Color(0xffED7738),
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: Colors.white, width: 2),
-                            ),
-                            child: const Icon(
-                              Icons.location_on,
-                              color: Colors.white,
-                              size: 20,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
         ],
       );
     });

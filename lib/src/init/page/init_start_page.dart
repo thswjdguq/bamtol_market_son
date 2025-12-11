@@ -4,8 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class InitStartPage extends StatelessWidget {
-  final Function() onStart;
-  const InitStartPage({super.key, required this.onStart});
+  const InitStartPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +37,10 @@ class InitStartPage extends StatelessWidget {
           bottom: 25 + Get.mediaQuery.padding.bottom,
         ),
         child: Btn(
-          onTap: onStart,
+          onTap: () {
+            // 시작하기 버튼 클릭 시 로그인 페이지로 이동
+            Get.offNamed('/login');
+          },
           child: const AppFont(
             '시작하기',
             align: TextAlign.center,

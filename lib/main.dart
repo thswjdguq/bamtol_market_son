@@ -4,6 +4,7 @@ import 'package:bamtol_market_app/src/common/controller/authentication_controlle
 import 'package:bamtol_market_app/src/common/controller/data_load_controller.dart';
 import 'package:bamtol_market_app/src/home/page/home_page.dart';
 import 'package:bamtol_market_app/src/home/controller/home_controller.dart';
+import 'package:bamtol_market_app/src/init/page/init_start_page.dart';
 import 'package:bamtol_market_app/src/splash/controller/splash_controller.dart';
 import 'package:bamtol_market_app/src/user/login/page/login_page.dart';
 import 'package:bamtol_market_app/src/user/login/controller/login_controller.dart';
@@ -71,6 +72,7 @@ class MyApp extends StatelessWidget {
 
       getPages: [
         GetPage(name: '/', page: () => const App()),
+        GetPage(name: '/start', page: () => const InitStartPage()),
         GetPage(name: '/home', page: () => const Root()),
         GetPage(name: '/only-home', page: () => const HomePage()),
         GetPage(name: '/login', page: () => const LoginPage()),

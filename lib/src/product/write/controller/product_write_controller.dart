@@ -26,15 +26,16 @@ class ProductWriteController extends GetxController {
   RxBool isPriceSuggest = RxBool(false);
 
   // ===== 상태 변수 (Chapter 15) - 위치/지도 =====
-  RxString locationLabel = RxString('아라동');
+  /// 위치 라벨 - 자동으로 좌표 기반으로 생성
+  RxString locationLabel = RxString('지도에서 선택한 위치');
 
   /// flutter_map 위치 선택 (lat, lng)
   Rx<LatLng> selectedLocation = Rx<LatLng>(
     LatLng(33.4996, 126.5312), // 기본값: 제주 아라동
   );
 
-  /// 지도 표시/숨기기 상태
-  RxBool isMapVisible = RxBool(false);
+  /// 지도 표시/숨기기 상태 - 기본값 true (항상 표시)
+  RxBool isMapVisible = RxBool(true);
 
   // ===== 상태 변수 (Chapter 15) - 드롭다운 =====
   RxString selectedCategory = RxString('');
@@ -174,6 +175,10 @@ class ProductWriteController extends GetxController {
   /// 지도에서 위치 선택 (LatLng 업데이트)
   void updateMapLocation(LatLng location) {
     selectedLocation(location);
+    // locationLabel 자동 업데이트
+    locationLabel(
+      '지도 위치 (${location.latitude.toStringAsFixed(4)}, ${location.longitude.toStringAsFixed(4)})',
+    );
   }
 
   /// 지도 표시 토글
@@ -327,11 +332,11 @@ class ProductWriteController extends GetxController {
     priceText('');
     isFree(false);
     isPriceSuggest(false);
-    locationLabel('아라동');
+    locationLabel('지도에서 선택한 위치');
     selectedLocation(LatLng(33.4996, 126.5312));
     selectedCategory('');
     selectedCondition('');
-    isMapVisible(false);
+    isMapVisible(true); // 지도 항상 표시
     isPossibleSubmit(false);
   }
 }

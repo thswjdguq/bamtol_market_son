@@ -1,58 +1,37 @@
 import 'package:bamtol_market_app/src/common/components/app_font.dart';
-import 'package:bamtol_market_app/src/common/components/getx_listener.dart';
-import 'package:bamtol_market_app/src/common/controller/authentication_controller.dart';
 import 'package:bamtol_market_app/src/common/controller/data_load_controller.dart';
 import 'package:bamtol_market_app/src/splash/controller/splash_controller.dart';
-import 'package:bamtol_market_app/src/splash/enum/step_type.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class SplashPage extends GetView<SplashController> {
+class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
 
   @override
+  State<SplashPage> createState() => _SplashPageState();
+}
+
+class _SplashPageState extends State<SplashPage> {
+  @override
+  void initState() {
+    super.initState();
+    _loadDataAndNavigate();
+  }
+
+  Future<void> _loadDataAndNavigate() async {
+    // 데이터 로드
+    Get.find<DataLoadController>().loadData();
+    // 약간의 딜레이 (스플래시 화면 표시 시간)
+    await Future.delayed(const Duration(seconds: 2));
+    // InitStartPage로 이동
+    if (mounted) {
+      Get.offNamed('/start');
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: GetxListener<bool>(
-          listen: (bool isLogined) {
-            if (isLogined) {
-              Get.offNamed('/home');
-            } else {
-              Get.offNamed('/login');
-            }
-          },
-          stream: Get.find<AuthenticationController>().isLogined,
-          child: GetxListener<bool>(
-            listen: (bool value) {
-              if (value) {
-                controller.loadStep(StepType.authCheck);
-              }
-            },
-            stream: Get.find<DataLoadController>().isDataLoad,
-            child: GetxListener<StepType>(
-              initCall: () {
-                controller.loadStep(StepType.dataLoad);
-              },
-              listen: (StepType? value) {
-                if (value == null) return;
-                switch (value) {
-                  case StepType.init:
-                  case StepType.dataLoad:
-                    Get.find<DataLoadController>().loadData();
-                    break;
-                  case StepType.authCheck:
-                    Get.find<AuthenticationController>().authCheck();
-                    break;
-                }
-              },
-              stream: controller.loadStep,
-              child: const _SplashView(),
-            ),
-          ),
-        ),
-      ),
-    );
+    return const Scaffold(body: Center(child: _SplashView()));
   }
 }
 
@@ -93,12 +72,7 @@ class _SplashView extends GetView<SplashController> {
           height: 200,
           child: Column(
             children: [
-              Obx(() {
-                return Text(
-                  '${controller.loadStep.value.name}중 입니다.',
-                  style: const TextStyle(color: Colors.white),
-                );
-              }),
+              const Text('데이터 로딩 중...', style: TextStyle(color: Colors.white)),
               const SizedBox(height: 20),
               const CircularProgressIndicator(
                 strokeWidth: 1,
